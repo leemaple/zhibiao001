@@ -1,0 +1,2 @@
+exec(compile(open('Programs/Source/ml_common.py').read(), 'ml_common.py', 'exec'))
+run_secure_ml('lr', 'infer')

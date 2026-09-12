@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main, 'codex/**']
-    paths: ['benchmark.json', 'programs/**', 'scripts/**', '.github/workflows/aggregate.yml']
+    paths: ['benchmark.json', 'programs/aggregate.mpc', 'scripts/install_mpspdz.py', 'scripts/run_benchmark.py', '.github/workflows/aggregate.yml']
 permissions:
   contents: read
 jobs:
