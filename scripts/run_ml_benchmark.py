@@ -143,6 +143,17 @@ def main():
     out = Path(args.output).resolve()
     out.mkdir(parents=True, exist_ok=False)
     config = json.loads((ROOT/"ml-benchmark.json").read_text())
+    # These fields also occur as constants in the MPC adapter/data layout.
+    # Reject drift instead of labeling a different computation with this JSON.
+    fixed_profile = {"train_samples": 64, "test_samples": 36, "features": 4,
+        "batch_size": 64, "learning_rate": 0.5, "momentum": 0.0,
+        "l2_lambda": 0.01, "fraction_bits": 16, "value_bits": 31,
+        "ring_bits": 64, "round_nearest": True,
+        "logistic_sigmoid": "upstream MP-SPDZ approx_sigmoid(n=5)",
+        "svm": "linear soft-margin hinge; L2 weights, unregularized bias"}
+    for key, expected in fixed_profile.items():
+        if config.get(key) != expected:
+            raise ValueError(f"{key} must match the fixed MPC profile: {expected!r}")
     install = json.loads((ROOT/"vendor/install.json").read_text())
     dist = ROOT/"vendor"/install["distribution"]
     for name in ["ml_common.py", "secure_lr_train.mpc", "secure_lr_infer.mpc", "secure_svm_train.mpc", "secure_svm_infer.mpc"]:
@@ -223,14 +234,15 @@ def main():
             model_unchanged=before==after
             (trial/"model-binding.json").write_text(json.dumps({"before_inference":before,"after_inference":after,"unchanged":model_unchanged},indent=2)+"\n")
             test_error=float(np.max(np.abs(test_scores-score(model,xtest,reference))))
+            saved_model_error=float(np.max(np.abs(test_scores-score(model,xtest,weights))))
             agreement=float(np.mean(test_pred==labels(model,score(model,xtest,reference))))
             infer_result.update({"model":model,"phase":"infer","repetition":repeat,
                 "compile_seconds":compiled[model,"infer"][1],"max_abs_score_error":test_error,
-                "max_abs_score_error_from_saved_model":float(np.max(np.abs(test_scores-score(model,xtest,weights)))),
+                "max_abs_score_error_from_saved_model":saved_model_error,
                 "class_agreement":agreement,"model_shares_unchanged":model_unchanged,
                 "accuracy":float(accuracy_score(ytest,test_pred)),"f1":float(f1_score(ytest,test_pred)),
                 "auc":float(roc_auc_score(ytest,test_scores)),
-                "pass":test_error<=config["max_abs_score_error"] and agreement>=config["minimum_class_agreement"] and model_unchanged})
+                "pass":test_error<=config["max_abs_score_error"] and saved_model_error<=config["max_abs_score_error"] and agreement>=config["minimum_class_agreement"] and model_unchanged})
             (trial/"infer/result.json").write_text(json.dumps(infer_result,indent=2)+"\n")
             records.append(infer_result)
             print(json.dumps({k:infer_result[k] for k in ["model","phase","repetition","pass","wall_seconds","accuracy","max_abs_score_error"]}),flush=True)
@@ -244,7 +256,8 @@ def main():
                 "max_abs_score_error":max(r["max_abs_score_error"] for r in rows),
                 "min_class_agreement":min(r["class_agreement"] for r in rows),
                 "accuracy":rows[0]["accuracy"],
-                "max_abs_weight_error":max(r.get("max_abs_weight_error",0) for r in rows),
+                # Inference does not measure weights again. Missing is not zero.
+                "max_abs_weight_error":max(r["max_abs_weight_error"] for r in rows) if phase=="train" else None,
                 "sum_application_sent_decimal_MB":stats([sum(p["application_sent_decimal_MB"] for p in r["parties"]) for r in rows])})
     (out/"summary.json").write_text(json.dumps(summary,indent=2)+"\n")
     (out/"SHA256SUMS.json").write_text(json.dumps({str(p.relative_to(out)):sha(p) for p in sorted(out.rglob("*")) if p.is_file()},indent=2)+"\n")
