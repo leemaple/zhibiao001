@@ -1,0 +1,32 @@
+name: Synthetic two-party aggregation
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'codex/**']
+    paths: ['benchmark.json', 'programs/**', 'scripts/**', '.github/workflows/aggregate.yml']
+permissions:
+  contents: read
+jobs:
+  aggregate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Runtime dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libgmp-dev libsodium-dev libssl-dev libboost-thread-dev libboost-filesystem-dev libboost-iostreams-dev
+      - name: Hash-verified upstream distribution
+        run: python3 scripts/install_mpspdz.py
+      - name: Run real MPC and compare every element
+        run: python3 scripts/run_benchmark.py --output results
+      - name: Preserve raw data, logs, environment and summary
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: synthetic-aggregate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: results/
+          if-no-files-found: warn
+          retention-days: 30

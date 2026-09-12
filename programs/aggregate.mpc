@@ -1,0 +1,24 @@
+from Compiler.library import start_timer, stop_timer
+from Compiler.types import sint
+
+n = int(program.args[1])
+assert 0 < n <= 1000000
+
+start_timer(1)
+left = sint.get_input_from(0, size=n)
+right = sint.get_input_from(1, size=n)
+stop_timer(1)
+
+start_timer(2)
+total = left + right
+stop_timer(2)
+
+# This reveal is exclusively a synthetic correctness diagnostic.
+# A real private-gradient pipeline should continue using secret shares.
+start_timer(3)
+diagnostic = total.reveal_to(0)
+stop_timer(3)
+
+start_timer(4)
+diagnostic.binary_output()
+stop_timer(4)

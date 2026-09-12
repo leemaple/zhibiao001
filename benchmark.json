@@ -1,0 +1,21 @@
+{
+  "schema": "synthetic-aggregate-v1",
+  "upstream": "https://github.com/data61/MP-SPDZ",
+  "release": "v0.4.3",
+  "commit": "26a605368e40fed3a7e9cee78c9a3f4390b85eb5",
+  "archive_url": "https://github.com/data61/MP-SPDZ/releases/download/v0.4.3/mp-spdz-0.4.3.tar.xz",
+  "archive_sha256": "4b5f4f7a79f31365288fe4498ba2b70afc314c028696929c8d259ef50ab2e759",
+  "protocol": "semi2k",
+  "parties": 2,
+  "ring_bits": 64,
+  "fraction_bits": 20,
+  "absolute_input_bound_encoded": 1073741824,
+  "dimensions": [1000, 100000],
+  "seed": 20260912,
+  "warmups": 1,
+  "repetitions": 3,
+  "timeout_seconds": 180,
+  "network": "Two processes on one runner; TLS over loopback; no WAN emulation",
+  "output": "Synthetic diagnostic sum reconstructed only to party 0",
+  "acceptance_threshold": null
+}
