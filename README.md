@@ -1,5 +1,7 @@
 # Public two-party MPC baselines
 
+New native VOLE-PSI and actual model-gradient measurements, with runner commands and precise limits: [2026-09-13 results](RESULTS-20260913.md). These workflows are on `codex/practical-gradient-volepsi`.
+
 Public-data checks built on [MP-SPDZ v0.4.3](https://github.com/data61/MP-SPDZ/tree/26a605368e40fed3a7e9cee78c9a3f4390b85eb5). The official Linux archive is pinned by SHA-256. A GitHub-hosted Ubuntu 24.04 runner executes two real `semi2k` processes with private inputs, arithmetic shares in the 64-bit ring and encrypted loopback channels.
 
 ## Logistic regression and linear SVM
