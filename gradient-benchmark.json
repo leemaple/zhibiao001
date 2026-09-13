@@ -1,0 +1,13 @@
+{
+  "model": "50 trainable affine layers: 4->32, 48 residual 32->32 tanh blocks, 32->2",
+  "affine_layers": 50,
+  "parameters": 50914,
+  "seed": 20260913,
+  "dataset": "public Iris first two classes; stratified 64 train, 36 test",
+  "samples_per_party": 32,
+  "fraction_bits": 20,
+  "repetitions": 3,
+  "observation_threshold_seconds": 1.0,
+  "timeout_seconds": 120,
+  "scope": "Local PyTorch forward/backward produces real gradients; only aggregation uses MPC. Not full encrypted DNN training or inference."
+}

@@ -1,0 +1,12 @@
+from Compiler.types import sint
+from Compiler.library import start_timer, stop_timer
+
+n = int(program.args[1])
+assert 0 < n <= 1000000
+start_timer(1)
+left = sint.get_input_from(0, size=n)
+right = sint.get_input_from(1, size=n)
+total = left + right
+# No reveal. Persist each party's additive output shares separately.
+sint.write_to_file(total, position=0)
+stop_timer(1)
