@@ -1,5 +1,7 @@
 vendor/
 results/
 results-ml/
+results-volepsi/
+results-gradient/
 __pycache__/
 *.pyc

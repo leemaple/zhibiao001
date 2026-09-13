@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/ladnir/volepsi.git",
+  "commit": "ed943f5f814591cdf864777c73b7bc9e7526c1a8",
+  "libote_commit": "d55867114c78272be7142bd67ebdcb346fec8621",
+  "security": "two-party semi-honest, real base OT/VOLE, QC encoder, ssp=40",
+  "network": "TLS 1.3 loopback, two native processes on one host",
+  "seed": 20260913,
+  "repetitions": 3,
+  "timeout_seconds": 600,
+  "cases": [
+    {"name": "empty_intersection", "sender": 2048, "receiver": 2048, "intersection": 0},
+    {"name": "full_intersection", "sender": 2048, "receiver": 2048, "intersection": 2048},
+    {"name": "unbalanced_small", "sender": 4096, "receiver": 1024, "intersection": 256},
+    {"name": "million_unbalanced", "sender": 1000000, "receiver": 100000, "intersection": 10000},
+    {"name": "ten_million_unbalanced", "sender": 10000000, "receiver": 1000000, "intersection": 100000},
+    {"name": "ten_million_balanced", "sender": 10000000, "receiver": 10000000, "intersection": 100000}
+  ]
+}
